@@ -13,28 +13,30 @@
   <tbody>	
 		<tr>
 	<?php 
-				$sql="SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS Where Table_Name ='lime_survey_12' and DATA_TYPE not like 'datetime'";
-				$result = mysql_query($sql);
-				while($w = mysql_fetch_assoc($result)){
-				?>
-					<td><?=$w['COLUMN_NAME']?></td>
-				<?}?>
-		</tr>
-	<?php 
 			$sql="SELECT * FROM `lime_survey_12` WHERE `submitdate` is not null ";
 			$result = mysql_query($sql);
+			$ws = mysql_fetch_assoc($result);
+			foreach($ws as $key=>$value){
+				if($key!='submitdate' && $key!='startdate' && $key!='datestamp' && $key !='token'){		
+			?>
+				<td><?=$key?></td>
+				<?}	
+			}?>
+			</tr>
+	<?php 
 			while($rs = mysql_fetch_assoc($result)){
 				echo '<tr>';
 				foreach ($rs as $key=>$value){
-					if($key!='submitdate' && $key!='startdate' && $key!='datestamp'){
-				?>
+					if($key!='submitdate' && $key!='startdate' && $key!='datestamp' && $key !='token'){
+			?>
 				<td><?=$value?></td>
 			<?	 }
 				}
 				echo '</tr>';
-			}?>
+			}?> 
   </tbody>
 </table>
+
 </body>
 </html>
 	  
