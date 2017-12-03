@@ -1,13 +1,18 @@
+
 ﻿<!----Rhoda 2017/12/03 修改---->
+
 <?php
 include( 'connect.php' );
 ?>
+
 <!doctype html>
 <html>
 
 <head>
 	<meta charset="utf-8">
+
 	<title>問卷統整</title>
+
 </head>
 
 <body>
@@ -21,6 +26,7 @@ include( 'connect.php' );
     	for($i=0;$i<$count_bar;$i++){ 
 			$array_bar[$i]=mysql_fetch_array($result);
 	 	};
+
         //第一題
 		$sql_x="SELECT * FROM `lime_questions` WHERE `qid`='860' AND `language`='zh-Hant-TW'";
 		$result_x = mysql_query($sql_x);
@@ -29,6 +35,7 @@ include( 'connect.php' );
 			echo $w_x['question'];
 			echo "</td>";
 		}
+
 		//前五個	
 		for($i=0;$i<$count_bar;$i++){ 
 			if($i<5){
@@ -36,6 +43,7 @@ include( 'connect.php' );
 				echo $array_bar[$i]['COLUMN_NAME'];
 				echo "</td>";	
 				}
+
 		}
 		//正常的後面
 		for($i=6;$i<$count_bar;$i++){
@@ -48,7 +56,7 @@ include( 'connect.php' );
 				$sql_x="SELECT * FROM `lime_questions` WHERE `qid`='$firstQid' AND `language`='zh-Hant-TW'";
 				$result_x = mysql_query($sql_x);
 				while($w_x = mysql_fetch_assoc($result_x)){	
-					if($w_x['type']=='M'||$w_x['type']=='F'){
+       		if($w_x['type']=='M'||$w_x['type']=='F'){
 						$sql_title="SELECT * FROM `lime_questions` WHERE `parent_qid`='$firstQid' AND `language`='zh-Hant-TW'";
 						$result_title = mysql_query($sql_title);
 						while($w_title = mysql_fetch_assoc($result_title)){
@@ -66,10 +74,14 @@ include( 'connect.php' );
 						echo $w_x['question']."其他";
 						echo "</td>";
 					}
+    
+
+
 				}
 				
 			}	
 	 	}
+
 		//表格內容
 		$sql="SELECT * FROM `lime_survey_12` WHERE `submitdate` is not null ";
 		$result = mysql_query($sql);
