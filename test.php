@@ -23,45 +23,65 @@ include( 'connect.php' );
     	for($i=0;$i<$count_bar;$i++){ 
 			$array_bar[$i]=mysql_fetch_array($result);
 	 	};
-		//前五個
-		for($i=0;$i<5;$i++){ 
-			echo "<td>";
-			echo $array_bar[$i]['COLUMN_NAME'];
-			echo "</td>";	
-	 	};
-				
+		//前五個	
+		for($i=0;$i<$count_bar;$i++){ 
+			if($i<5){
+				echo "<td>";
+				echo $array_bar[$i]['COLUMN_NAME'];
+				echo "</td>";	
+				}
+			}
+		//怪怪的第一題
 		$sql_x="SELECT * FROM `lime_questions` WHERE `qid`='860' AND `language`='zh-Hant-TW'";
 		$result_x = mysql_query($sql_x);
 		while($w_x = mysql_fetch_assoc($result_x)){
 			echo "<td>";
-			echo $w_x['question']."<br>";
-			echo "</td>";		
-		}
-		//題組9的題目
-		for($i=6;$i<103;$i++){ 
-			$Arr1=str_split($array_bar[$i]['COLUMN_NAME']); 
-			$aa=$Arr1[5].$Arr1[6].$Arr1[7];
-			//echo $aa.'<br>';
-			$sql_x="SELECT * FROM `lime_questions` WHERE `qid`='$aa' AND `language`='zh-Hant-TW'";
-			$result_x = mysql_query($sql_x);
-			while($w_x = mysql_fetch_assoc($result_x)){
-			echo "<td>";
-			echo $w_x['question']."<br>";
+			echo $w_x['question'];
 			echo "</td>";
-			}
 		}
-		//剩下的題目
-		for($i=103;$i<$count_bar;$i++){ 
-			$Arr1=str_split($array_bar[$i]['COLUMN_NAME']); 
-			$aa=$Arr1[6].$Arr1[7].$Arr1[8];
-			$sql_x="SELECT * FROM `lime_questions` WHERE `qid`='$aa' AND `language`='zh-Hant-TW'";
-			$result_x = mysql_query($sql_x);
-			while($w_x = mysql_fetch_assoc($result_x)){
-				echo "<td>";
-				echo $w_x['question']."<br>";
-				echo "</td>";
-			}
+		//正常的後面
+		for($i=6;$i<$count_bar;$i++){
+			if($i<103){
+				$j=$i+1;
+				$Arr1=str_split($array_bar[$i]['COLUMN_NAME']);
+				$Arr2=str_split($array_bar[$j]['COLUMN_NAME']); 
+				$aa=$Arr1[5].$Arr1[6].$Arr1[7];
+				$bb=$Arr2[5].$Arr2[6].$Arr2[7];;
+			}else {
+				$j=$i+1;
+				$Arr1=str_split($array_bar[$i]['COLUMN_NAME']);
+				$Arr2=str_split($array_bar[$j]['COLUMN_NAME']); 
+				$aa=$Arr1[6].$Arr1[7].$Arr1[8];
+				$bb=$Arr2[6].$Arr2[7].$Arr2[8];;
+			 }
+			if($aa==$bb){
+				$i+1;
+			}else{
+				$sql_x="SELECT * FROM `lime_questions` WHERE `qid`='$aa' AND `language`='zh-Hant-TW'";
+				$result_x = mysql_query($sql_x);
+				while($w_x = mysql_fetch_assoc($result_x)){	
+				if($w_x['type']=='M'){
+					$sql_title="SELECT * FROM `lime_questions` WHERE `parent_qid`='$aa' AND `language`='zh-Hant-TW'";
+					$result_title = mysql_query($sql_title);
+					while($w_title = mysql_fetch_assoc($result_title)){
+						echo "<td>";
+						echo $w_x['question'].$w_title['question'];
+						echo "</td>";
+						
+					}
+					echo "<td>";
+					echo $w_x['question']."其他";
+					echo "</td>";
+				}else{
+					echo "<td>";
+					echo $w_x['question'];
+					echo "</td>";
+				 }
+			}	
+	 	}
 		}
+		
+		
 		//表格內容
 		$sql="SELECT * FROM `lime_survey_12` WHERE `submitdate` is not null ";
 		$result = mysql_query($sql);
