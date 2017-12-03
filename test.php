@@ -53,9 +53,7 @@ include( 'connect.php' );
 				$aa=$Arr1[6].$Arr1[7].$Arr1[8];
 				$bb=$Arr2[6].$Arr2[7].$Arr2[8];
 			 }
-			if($aa==$bb){
-				$i+1;
-			}else{
+			if($aa!=$bb){
 				$sql_x="SELECT * FROM `lime_questions` WHERE `qid`='$aa' AND `language`='zh-Hant-TW'";
 				$result_x = mysql_query($sql_x);
 				while($w_x = mysql_fetch_assoc($result_x)){	
