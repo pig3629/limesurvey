@@ -19,7 +19,6 @@ include( 'connect.php' );
 		$sql="SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS Where Table_Name ='lime_survey_12' and DATA_TYPE not like 'datetime'";
 		$result = mysql_query($sql);
 		$count_bar=mysql_num_rows($result); 
-		echo $count_bar;
     	for($i=0;$i<$count_bar;$i++){ 
 			$array_bar[$i]=mysql_fetch_array($result);
 	 	};
