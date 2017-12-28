@@ -11,7 +11,7 @@ include( 'connect.php' );
 </head>
 
 <body>
-	<?php 
+	 <?php 
 		$ans="SELECT  `12X9X8591` , COUNT( * ) FROM  `lime_survey_12` WHERE  `12X12X775D101` IS NOT NULL GROUP BY  `12X9X8591`";
     	$result_ans = mysql_query($ans) or die('query error0');
 		$count_ans=mysql_num_rows($result_ans); 
@@ -20,7 +20,7 @@ include( 'connect.php' );
   <tbody>
     <tr>
 	<?php //印題目
-		/*$sql="SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS Where Table_Name ='lime_survey_12' and DATA_TYPE not like 'datetime'";
+	/*	$sql="SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS Where Table_Name ='lime_survey_12' and DATA_TYPE not like 'datetime'";
  		$result = mysql_query($sql);
  		$count_all=mysql_num_rows($result); 
      	for($i=0;$i<$count_all;$i++){ 
@@ -34,7 +34,7 @@ include( 'connect.php' );
  			echo $w_x['answer'];
  			echo "</td>";
  		}
- 		//正常的後面
+ 		正常的後面
  		for($i=6;$i<$count_all;$i++){
              $j=$i+1;
              $first=explode("X",$array_all[$i]['COLUMN_NAME']);
@@ -71,7 +71,7 @@ include( 'connect.php' );
  				
  			}	
  	 	}*/
-		?> 
+		?>  
 		</tr>
   	</tbody>
 </table>
@@ -180,38 +180,34 @@ include( 'connect.php' );
 		  //print_r($array_live);
 //sql----------------------------------------------------------------------------------------------------------------------------------//
 	// 	//sql_sex
-		$f=array();
-		$xx=array();
-		
-		for($b=0;$b<$count_sex;$b++){
-			echo "<tr>";
-			echo "<td>選項</td>";	
-			echo "<td>統計</td>";	
-			for($a=0;$a<$count_abc;$a++){
-				$aa=$array_sex[$b]['code'];
-				if($ABC[$a]!='12X9X794'&&$ABC[$a]!='12X12X788'&&$ABC[$a]!='12X11X810'){
-					$sex="SELECT  `$ABC[$a]` , COUNT( * ) as total FROM  `lime_survey_12` WHERE  `12X12X775D101`='$aa' GROUP BY  `$ABC[$a]`";
+		  $i=0;
+			foreach($ABC as $abc){
+				$second=explode("X",$abc);
+				$firstQid= mb_substr($second[2],0,3,"utf-8"); //取qid碼 
+				$Qid[$firstQid]=$firstQid;
+				if($abc!='12X9X794'&&$abc!='12X12X788'&&$abc!='12X11X810'){
+					$sex="SELECT  `$abc` , COUNT( * ) as total FROM  `lime_survey_12` WHERE  `12X12X775D101` GROUP BY  `$abc`,`12X12X775D101`";
 					$result_sqlsex = mysql_query($sex) or die('query error0');
 					$count_sqlsex=mysql_num_rows($result_sqlsex); 
 					while($rs = mysql_fetch_assoc($result_sqlsex)){
-						echo "<tr>";
-											
-						foreach($rs as $rst){ 
-							echo "<td>";
-							if($rst[0]=='') echo '空';
-							else echo $rst[0];
-							echo "</td>";
-							echo "<td>".$rs['total']."</td>";
-						}
-
-						echo"</tr>";
+						$i++;
+						if($rs[$abc]=='') $rs[$abc]='null';
+						if($i%2==0) $c2[$firstQid][$rs[$abc]]=$rs['total']; //女生的陣列
+						else $c[$firstQid][$rs[$abc]]=$rs['total']; //男生的陣列
 					}
 				}
 			}
-		}
-		echo "</tr>";
-	
-	// ?>
+			foreach($Qid as $qid){
+				$sql_ans="SELECT answer,code FROM `lime_answers` WHERE `qid`='$qid' AND `language`='zh-Hant-TW'";
+				$result_ans = mysql_query($sql_ans);
+				while($rs = mysql_fetch_assoc($result_ans)){
+					$b[$qid][$rs['code']]=$rs['answer']; //b=answer
+				}
+			}
+			print_r($b);
+			//print_r($c);
+
+	 ?>
 		</tr>
   	</tbody>
 </table>
