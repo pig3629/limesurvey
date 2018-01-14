@@ -1,4 +1,3 @@
-
 <!----Rhoda 2017/12/21 修改---->
 <?php
 include( 'connect.php' );
@@ -76,6 +75,7 @@ include( 'connect.php' );
   	</tbody>
 </table>
 <!-------------------------------------------------------------------------------------------------------------------------------------->
+<!--姐姐說把M跟F的qid分開-->
 <table width="200" border="1" style="text-align: center;" RULES=ALL>
   <tbody>
     <tr>	
@@ -93,10 +93,18 @@ include( 'connect.php' );
 		$sql_question="SELECT `qid`,`type` FROM `lime_questions` WHERE `language`='zh-Hant-TW'";
  		$result_question = mysql_query($sql_question);
 		$count_question=mysql_num_rows($result_question); 
-	
+		$ABC_M=array();
+		$ABC_F=array();
      	for($i=0;$i<$count_question;$i++){ 
  			$array_question[$i]=mysql_fetch_array($result_question);
- 	 	};//print_r($array_question);
+			if($array_question[$i]['type']=='M'){
+				array_push($ABC_M,$array_question[$i]['qid']);
+			}else{
+				array_push($ABC_F,$array_question[$i]['qid']);
+			}
+ 	 	};
+		$count_M=count($ABC_M);
+		$count_F=count($ABC_F);
 		
 		//lime_survey_12
 		$all="SELECT * FROM `lime_survey_12`";
@@ -121,71 +129,35 @@ include( 'connect.php' );
 				
 		}
 		//key分類ABC
+		$q_m=array();
+		$q_f=array();
 		for($i=8;$i<$count_key;$i++){
 			$abc=explode("X",$array_key[$i]);
 			if($abc[1]!='12'){
-				array_push($ABC,$array_key[$i]);
+				$second=explode("X",$array_key[$i]);
+				$firstQid= mb_substr($second[2],0,3,"utf-8"); 
+				for($ii=0;$ii<$count_M;$ii++){
+					if($firstQid==$ABC_M[$ii]){
+						array_push($q_m,$array_key[$i]);
+					}
+				}
+				for($ii=0;$ii<$count_F;$ii++){
+					if($firstQid==$ABC_F[$ii]){
+						array_push($q_f,$array_key[$i]);
+					}
+				}
 			}
-		}//print_r($ABC);
-		$count_abc=count($ABC);
+		}//print_r($q_f);
 		
-		//sex
-		$sql_sex="SELECT `code` FROM `lime_answers` WHERE `qid`='775' AND `language`='zh-Hant-TW'";
- 		$result_sex = mysql_query($sql_sex);
-		$count_sex=mysql_num_rows($result_sex); 
-	
-     	for($i=0;$i<$count_sex;$i++){ 
- 			$array_sex[$i]=mysql_fetch_array($result_sex);
-		  };
- 		//age
-		$sql_age="SELECT `code` FROM `lime_answers` WHERE `qid`='776' AND `language`='zh-Hant-TW'";
- 		$result_age = mysql_query($sql_age);
-		$count_age=mysql_num_rows($result_age); 
-	
-     	for($i=0;$i<$count_age;$i++){ 
- 			$array_age[$i]=mysql_fetch_array($result_age);
- 	 	};//print_r($array_age);
-		//education
-		$sql_education="SELECT `code` FROM `lime_answers` WHERE `qid`='777' AND `language`='zh-Hant-TW'";
- 		$result_education = mysql_query($sql_education);
-		$count_education=mysql_num_rows($result_education); 
-	
-     	for($i=0;$i<$count_education;$i++){ 
- 			$array_education[$i]=mysql_fetch_array($result_education);
- 	 	};//print_r($array_educaton);
-		//job
-		$sql_job="SELECT `code` FROM `lime_answers` WHERE `qid`='778' AND `language`='zh-Hant-TW'";
- 		$result_job = mysql_query($sql_job);
-		$count_job=mysql_num_rows($result_job); 
-	
-     	for($i=0;$i<$count_job;$i++){ 
- 			$array_job[$i]=mysql_fetch_array($result_job);
- 	 	};//print_r($array_job);
-		//money
-		$sql_money="SELECT `code` FROM `lime_answers` WHERE `qid`='779' AND `language`='zh-Hant-TW'";
- 		$result_money = mysql_query($sql_money);
-		$count_money=mysql_num_rows($result_money); 
-	
-     	for($i=0;$i<$count_money;$i++){ 
- 			$array_money[$i]=mysql_fetch_array($result_money);
- 	 	};//print_r($array_money);
-		//live
-		$sql_live="SELECT `code` FROM `lime_answers` WHERE `qid`='780' AND `language`='zh-Hant-TW'";
- 		$result_live = mysql_query($sql_live);
-		$count_live=mysql_num_rows($result_live); 
-	
-     	for($i=0;$i<$count_live;$i++){ 
- 			$array_live[$i]=mysql_fetch_array($result_live);
-		  };
-		  //print_r($array_live);
 //sql----------------------------------------------------------------------------------------------------------------------------------//
-	// 	//sql_sex
+		//sql_sex
 		  $i=0;
-			foreach($ABC as $abc){
+			foreach($q_f as $abc){
+				
 				$second=explode("X",$abc);
 				$firstQid= mb_substr($second[2],0,3,"utf-8"); //取qid碼 
 				$Qid[$firstQid]=$firstQid;
-				if($abc!='12X9X794'&&$abc!='12X12X788'&&$abc!='12X11X810'){
+				if($abc!='12X9X794' && $abc!='12X12X788' && $abc!='12X11X810' && $abc!='12X11X809'){
 					$sex="SELECT  `$abc` , COUNT( * ) as total FROM  `lime_survey_12` WHERE  `12X12X775D101` GROUP BY  `$abc`,`12X12X775D101`";
 					$result_sqlsex = mysql_query($sex) or die('query error0');
 					$count_sqlsex=mysql_num_rows($result_sqlsex); 
@@ -204,9 +176,61 @@ include( 'connect.php' );
 					$b[$qid][$rs['code']]=$rs['answer']; //b=answer
 				}
 			}
-			print_r($b);
+			echo "選男生問題的單選";
+			//$result=array_diff($b[$qis],$c[$qis]);
+			foreach($b as $i=>$qis){
+				//print_r($qis);
+				$result2[$i]=array_diff_key($b[$i],$c[$i]);
+				foreach($result2[$i] as $a=> $qans){
+					$c[$i][$a] = '無人選';
+					ksort($c[$i]); 
+				}
+				
+				foreach($qis as $u=>$col){
+					
+					echo "<tr><td>".$i."</td>";
+					echo "<td>".$u."</td>";
+					echo "<td>".$c[$i][$u]."</td></tr>";
+				}
+			}
+			//print_r($b);
+			
+		// $ccode=array_keys($c);
+		// $bcode=array_keys($b);
+		// for($i=0;$i<119;$i++){
+		// 	$ckey=array_keys($c[$ccode[$i]]);
+		// 	$bkey=array_keys($b[$bcode[$i]]);
+		// 	$dd=array_diff($ckey,$bkey);
+		// 	//print_r(array_keys($c[$ccode[$i]]));
+		// 	//print_r(array_keys($b[$bcode[$i]]));
+		// 	//print_r($dd);
+		// 	//echo "<br>";
+		// 	echo "<tr>";
+		// 	foreach($b[$bcode[$i]] as $value_f){
+		// 		//echo "<tr><td>".$q_f[$i]."</td>";
+		// 		echo "<td>".$value_f."</td>";
+		// 	}echo "</td><tr>";
+		// 	foreach($c[$ccode[$i]] as $value_f){
+		// 		echo "<td>".$value_f."</td>";
+		// 	}
+		// 	foreach($c2[$ccode[$i]] as $value_f){
+		// 		echo "<td>".$value_f."</td>";
+		// 	}
+		// 	echo "</tr>";
+		// 	/*if(array_diff($ckey,$bkey)){
+		// 		print_r(array_keys($c[$ccode[$i]]));
+		// 		print_r(array_keys($b[$bcode[$i]]));
+		// 		echo '有<br>';
+		// 	}else{
+		// 		print_r(array_keys($c[$ccode[$i]]));
+		// 		print_r(array_keys($b[$bcode[$i]]));
+		// 		echo '空<br>';
+		// 	}*/
+		// }
+		
+		
+			//print_r($b);
 			//print_r($c);
-
 	 ?>
 		</tr>
   	</tbody>
